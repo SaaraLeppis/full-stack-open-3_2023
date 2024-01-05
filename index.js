@@ -48,36 +48,44 @@ const generateId = () => {
   return maxId + 1
 }
 
-app.get("/", (req, resp) => {
-  resp.send("<h1>API to check Persons</h1>")
+app.get("/", (req, res) => {
+  res.send("<h1>API to check Persons</h1>")
 })
-app.get("/api/persons", (req, resp) => {
-  resp.json(persons)
+app.get("/api/persons", (req, res) => {
+  res.json(persons)
 })
-app.get("/api/persons/:id", (req, resp) => {
+app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
   const person = persons.find(person => person.id === id)
-  person ? resp.json(person) : resp.status(404).end()
+  person ? res.json(person) : res.status(404).end()
 })
 
-// before expresps is taken into use
+// before expresp is taken into use
 /* const app = http.createServer((request, response) => {
   response.writeHead(200, { "Content-Type": "application/json" })
   response.end(JSON.stringify(notes))
 }) */
-app.delete("/api/persons/:id", (req, resp) => {
+
+app.get("/info", (req, res) => {
+  res.send(
+    ` <p>Phonebook has info for ${persons.length} people</p>
+      <p>${Date()}</p>
+    `
+  )
+})
+app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
   persons = persons.filter(person => person.id !== id)
 
-  resp.status(204).end()
+  res.status(204).end()
 })
 
-app.post("/api/persons", (req, resp) => {
+app.post("/api/persons", (req, res) => {
   const body = req.body
   console.log(body, "is body")
 
   if (!body) {
-    return resp.status(400).json({
+    return res.status(400).json({
       error: "content missing",
     })
   }
