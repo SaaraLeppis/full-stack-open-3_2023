@@ -42,10 +42,20 @@ let persons = [
     important: true,
   },
 ] */
-// to generate id for new note
-const generateId = () => {
+
+// to generate id for new person
+/* const generateId = () => {
   const maxId = persons.length > 0 ? Math.max(...persons.map(n => n.id)) : 0
   return maxId + 1
+} */
+// 3.5 generate id for new person with math.random
+const generateId = () => {
+  const randomInteger = Math.floor(Math.random() * 1000)
+  if (persons.find(person => person.id === randomInteger)) {
+    return generateId
+  } else {
+    return randomInteger
+  }
 }
 
 app.get("/", (req, res) => {
@@ -102,7 +112,7 @@ app.post("/api/persons", (req, res) => {
     id: generateId(),
   }
   persons = persons.concat(person)
-  resp.json(persons)
+  res.json(persons)
 })
 
 const PORT = 3001
