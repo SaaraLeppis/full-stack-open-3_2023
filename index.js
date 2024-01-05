@@ -54,18 +54,18 @@ app.get("/", (req, res) => {
 app.get("/api/persons", (req, res) => {
   res.json(persons)
 })
-app.get("/api/persons/:id", (req, res) => {
+/* app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
   const person = persons.find(person => person.id === id)
   person ? res.json(person) : res.status(404).end()
-})
+}) */
 
 // before expresp is taken into use
 /* const app = http.createServer((request, response) => {
   response.writeHead(200, { "Content-Type": "application/json" })
   response.end(JSON.stringify(notes))
 }) */
-
+//3.2
 app.get("/info", (req, res) => {
   res.send(
     ` <p>Phonebook has info for ${persons.length} people</p>
@@ -73,6 +73,13 @@ app.get("/info", (req, res) => {
     `
   )
 })
+//3.3
+app.get("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id)
+  const person = persons.find(person => person.id === id)
+  person ? res.json(person.number) : res.status(404).end()
+})
+
 app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
   persons = persons.filter(person => person.id !== id)
