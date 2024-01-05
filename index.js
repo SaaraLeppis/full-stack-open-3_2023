@@ -57,7 +57,14 @@ const generateId = () => {
     return randomInteger
   }
 }
-
+const isUnique = name => {
+  if (
+    persons.find(person => person.name.toLowerCase() === name.toLowerCase())
+  ) {
+    return false
+  }
+  return true
+}
 app.get("/", (req, res) => {
   res.send("<h1>API to check Persons</h1>")
 })
@@ -101,9 +108,13 @@ app.post("/api/persons", (req, res) => {
   const body = req.body
   console.log(body, "is body")
 
-  if (!body) {
+  if (!body || !body.name || !body.number) {
     return res.status(400).json({
       error: "content missing",
+    })
+  } else if (!isUnique(body.name)) {
+    return res.status(400).json({
+      error: "name must be unique",
     })
   }
   const person = {
