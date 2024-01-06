@@ -1,7 +1,21 @@
 const express = require("express")
+const morgan = require("morgan")
 const app = express()
 //json parser to specify POST requests body as JavaScript object and places it to request object's body
 app.use(express.json())
+// 3.7 when only "tiny" format used
+//app.use(morgan("tiny"))
+//morgan - tiny(":method :url :status :res[content-length] - :response-time ms")
+morgan.token("postPerson", (req, res) => {
+  console.log(req.headers["content-type"])
+  return req.method === "POST" ? JSON.stringify(req.body) : ""
+})
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :postPerson"
+  )
+)
+
 let persons = [
   {
     name: "Arto Hellas",

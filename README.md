@@ -34,6 +34,11 @@ npm install --save-dev nodemon
 
 (Nodemon should be in "devDependencies" in _package.json_)
 
+## Morgan
+
+More about [morgan](https://github.com/expressjs/morgan)
+Middleware for logging
+
 ### Notes
 
 When using only Node (without Express) data will be changed to JSON with method **JSON.stringify**
