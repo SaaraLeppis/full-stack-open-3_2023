@@ -1,5 +1,7 @@
 const express = require("express")
 const morgan = require("morgan")
+const cors = require("cors")
+
 const app = express()
 //json parser to specify POST requests body as JavaScript object and places it to request object's body
 app.use(express.json())
@@ -7,7 +9,6 @@ app.use(express.json())
 //app.use(morgan("tiny"))
 //morgan - tiny(":method :url :status :res[content-length] - :response-time ms")
 morgan.token("postPerson", (req, res) => {
-  console.log(req.headers["content-type"])
   return req.method === "POST" ? JSON.stringify(req.body) : ""
 })
 app.use(
@@ -15,10 +16,11 @@ app.use(
     ":method :url :status :res[content-length] - :response-time ms :postPerson"
   )
 )
+app.use(cors())
 
 let persons = [
   {
-    name: "Arto Hellas",
+    name: "Artö Hellas",
     number: "040-123456",
     id: 1,
   },
@@ -137,7 +139,9 @@ app.post("/api/persons", (req, res) => {
     id: generateId(),
   }
   persons = persons.concat(person)
-  res.json(persons)
+  // *** or
+  //persons = [...persons, person]
+  res.json(person)
 })
 
 const PORT = 3001
