@@ -1,5 +1,9 @@
 #Full stack open
 
+Deployed to Render
+
+Address is [https://myfirst-render-76ss.onrender.com](https://myfirst-render-76ss.onrender.com)
+
 ```shell
 npm init
 ```
@@ -9,8 +13,10 @@ npm init
 to start node by
 
 ```shell
-npm start // instead of 'node index.js
+npm start
 ```
+
+(instead of 'node index.js)
 
 make script to _package.json_'s _scripts_
 

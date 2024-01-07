@@ -17,6 +17,8 @@ app.use(
   )
 )
 app.use(cors())
+// * * added for deploy
+app.use(express.static("dist"))
 
 let persons = [
   {
