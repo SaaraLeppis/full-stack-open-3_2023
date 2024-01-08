@@ -24,66 +24,6 @@ app.use(cors())
 // * * added for deploy
 app.use(express.static("dist"))
 
-// * * MONGOOSE * *
-/* const url = process.env.MONGODB_URI
-mongoose.set("strictQuery", false)
-mongoose.connect(url)
-
-const PersonSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-PersonSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  },
-})
-
-const Contact = mongoose.model("contact", PersonSchema) */
-
-let persons = [
-  {
-    name: "Artö Hellas",
-    number: "040-123456",
-    id: 1,
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2,
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3,
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4,
-  },
-]
-
-/* let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-] */
-
 // to generate id for new person
 /* const generateId = () => {
   const maxId = persons.length > 0 ? Math.max(...persons.map(n => n.id)) : 0
@@ -99,12 +39,13 @@ const generateId = () => {
   }
 }
 const isUnique = name => {
-  if (
-    persons.find(person => person.name.toLowerCase() === name.toLowerCase())
+  return true
+  /*   if (
+    Contact.find(person => person.name.toLowerCase() === name.toLowerCase())
   ) {
     return false
   }
-  return true
+  return true */
 }
 app.get("/", (req, res) => {
   res.send("<h1>API to check Persons</h1>")
@@ -136,16 +77,28 @@ app.get("/info", (req, res) => {
 })
 //3.3
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id)
+  /* const id = Number(req.params.id)
   const person = persons.find(person => person.id === id)
-  person ? res.json(person.number) : res.status(404).end()
+  person ? res.json(person.number) : res.status(404).end() */
+  Contact.findById(req.params.id).then(person => {
+    if (person) {
+      res.json(person)
+    } else {
+      res.status(404).end()
+    }
+  })
 })
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id)
+app.delete("/api/persons/:id", (req, res, next) => {
+  /*  const id = Number(req.params.id)
   persons = persons.filter(person => person.id !== id)
 
-  res.status(204).end()
+  res.status(204).end() */
+  Contact.findByIdAndDelete(req.params.id)
+    .then(() => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post("/api/persons", (req, res) => {
@@ -161,15 +114,18 @@ app.post("/api/persons", (req, res) => {
       error: "name must be unique",
     })
   }
-  const person = {
+  const person = new Contact({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  }
-  persons = persons.concat(person)
+    // id: generateId(),
+  })
+  person.save().then(savedPerson => {
+    res.json(savedPerson)
+  })
+  /*   persons = persons.concat(person)
   // *** or
   //persons = [...persons, person]
-  res.json(person)
+  res.json(person) */
 })
 
 const PORT = process.env.PORT
