@@ -114,14 +114,32 @@ app.post("/api/persons", (req, res) => {
       error: "name must be unique",
     })
   }
-  const person = new Contact({
-    name: body.name,
-    number: body.number,
-    // id: generateId(),
-  })
-  person.save().then(savedPerson => {
+  Contact.exists({ name: body.name })
+    .then(isNameUnique => {
+      if (!isNameUnique) {
+        const person = new Contact({
+          name: body.name,
+          number: body.number,
+        })
+
+        return person.save()
+      } else {
+        return Promise.reject("name must be unique")
+      }
+    })
+    .then(savedPerson => {
+      res.json(savedPerson)
+    })
+    .catch(error => {
+      console.error(error)
+      res.status(400).json({
+        error: error || "Internal Server Error",
+      })
+    })
+
+  /*person.save().then(savedPerson => {
     res.json(savedPerson)
-  })
+  })*/
   /*   persons = persons.concat(person)
   // *** or
   //persons = [...persons, person]
