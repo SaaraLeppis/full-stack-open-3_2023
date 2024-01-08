@@ -1,10 +1,12 @@
+require("dotenv").config()
 const mongoose = require("mongoose")
 
 const password = process.argv[2]
 const newName = process.argv[3]
 const newNumber = process.argv[4]
 
-const url = `mongodb+srv://saara:${password}@leppis.meqgdmm.mongodb.net/personApp?retryWrites=true&w=majority`
+const url = process.env.MONGODB_URI
+console.log(url)
 
 mongoose.set("strictQuery", false)
 mongoose.connect(url)
