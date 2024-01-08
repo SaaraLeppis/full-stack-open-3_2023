@@ -6,7 +6,6 @@ const newName = process.argv[3]
 const newNumber = process.argv[4]
 
 const url = process.env.MONGODB_URI
-console.log(url)
 
 mongoose.set("strictQuery", false)
 mongoose.connect(url)

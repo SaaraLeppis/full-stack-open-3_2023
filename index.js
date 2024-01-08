@@ -1,3 +1,7 @@
+require("dotenv").config()
+const mongoose = require("mongoose")
+const Contact = require("./models/contact")
+
 const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
@@ -19,6 +23,25 @@ app.use(
 app.use(cors())
 // * * added for deploy
 app.use(express.static("dist"))
+
+// * * MONGOOSE * *
+/* const url = process.env.MONGODB_URI
+mongoose.set("strictQuery", false)
+mongoose.connect(url)
+
+const PersonSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+PersonSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  },
+})
+
+const Contact = mongoose.model("contact", PersonSchema) */
 
 let persons = [
   {
@@ -87,7 +110,10 @@ app.get("/", (req, res) => {
   res.send("<h1>API to check Persons</h1>")
 })
 app.get("/api/persons", (req, res) => {
-  res.json(persons)
+  //  res.json(persons)
+  Contact.find({}).then(contacts => {
+    res.json(contacts)
+  })
 })
 /* app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
@@ -146,7 +172,7 @@ app.post("/api/persons", (req, res) => {
   res.json(person)
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
