@@ -109,11 +109,11 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({
       error: "content missing",
     })
-  } else if (!isUnique(body.name)) {
+  } /* else if (!isUnique(body.name)) {
     return res.status(400).json({
       error: "name must be unique",
     })
-  }
+  } */
   Contact.exists({ name: body.name })
     .then(isNameUnique => {
       if (!isNameUnique) {
