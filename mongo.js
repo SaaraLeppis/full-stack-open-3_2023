@@ -1,27 +1,27 @@
-require("dotenv").config()
-const mongoose = require("mongoose")
+require('dotenv').config()
+const mongoose = require('mongoose')
 
-const password = process.argv[2]
+//const password = process.argv[2]
 const newName = process.argv[3]
 const newNumber = process.argv[4]
 
 const url = process.env.MONGODB_URI
 
-mongoose.set("strictQuery", false)
+mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
 })
-const Contact = mongoose.model("Contact", personSchema)
+const Contact = mongoose.model('Contact', personSchema)
 
 const saveContact = () => {
   const contact = new Contact({
     name: newName,
     number: newNumber,
   })
-  contact.save().then(result => {
+  contact.save().then(() => {
     console.log(`added ${newName} number ${newNumber} to phonebook`)
     mongoose.connection.close()
   })
@@ -40,9 +40,9 @@ if (process.argv.length === 5) {
 } else if (process.argv.length === 3) {
   listContacts()
 } else if (process.argv.length < 3) {
-  console.log("give password as argument")
+  console.log('give password as argument')
   process.exit(1)
 } else if (process.argv.length > 5) {
-  console.log("too many arguments")
+  console.log('too many arguments')
   process.exit(1)
 }
