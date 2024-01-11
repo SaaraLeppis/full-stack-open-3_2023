@@ -24,15 +24,6 @@ app.use(cors())
 // * * added for deploy
 app.use(express.static("dist"))
 
-//3.16 error Handler midware
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformated id" })
-  }
-  next(error)
-}
-app.use(errorHandler)
 // to generate id for new person
 /* const generateId = () => {
   const maxId = persons.length > 0 ? Math.max(...persons.map(n => n.id)) : 0
@@ -114,9 +105,8 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch(error => next(error))
 })
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body
-  console.log(body, "is body")
 
   if (!body || !body.name || !body.number) {
     return res.status(400).json({
@@ -144,10 +134,9 @@ app.post("/api/persons", (req, res) => {
       res.json(savedPerson)
     })
     .catch(error => {
-      console.error(error)
-      res.status(400).json({
-        error: error || "Internal Server Error",
-      })
+      /*  res.status(400).json({
+        error: error || "Internal Server Error", */
+      next(error)
     })
 
   /*person.save().then(savedPerson => {
@@ -167,12 +156,28 @@ app.put("/api/persons/:id", (req, resp, next) => {
     number: body.number,
   }
 
-  Contact.findByIdAndUpdate(req.params.id, person, { new: true })
+  Contact.findByIdAndUpdate(req.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then(updatedPerson => {
       resp.json(updatedPerson)
     })
     .catch(error => next(error))
 })
+
+//3.16 error Handler midware
+const errorHandler = (error, request, response, next) => {
+  console.error("errorHandler", error.name)
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformated id" })
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message })
+  }
+  next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
