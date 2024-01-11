@@ -38,7 +38,7 @@ const generateId = () => {
     return randomInteger
   }
 }
-const isUnique = name => {
+const isNameUnique = name => {
   return true
   /*   if (
     Contact.find(person => person.name.toLowerCase() === name.toLowerCase())
