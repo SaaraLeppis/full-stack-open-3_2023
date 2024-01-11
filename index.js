@@ -24,6 +24,15 @@ app.use(cors())
 // * * added for deploy
 app.use(express.static("dist"))
 
+//3.16 error Handler midware
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformated id" })
+  }
+  next(error)
+}
+app.use(errorHandler)
 // to generate id for new person
 /* const generateId = () => {
   const maxId = persons.length > 0 ? Math.max(...persons.map(n => n.id)) : 0
@@ -50,11 +59,13 @@ const isNameUnique = name => {
 app.get("/", (req, res) => {
   res.send("<h1>API to check Persons</h1>")
 })
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (req, res, next) => {
   //  res.json(persons)
-  Contact.find({}).then(contacts => {
-    res.json(contacts)
-  })
+  Contact.find({})
+    .then(contacts => {
+      res.json(contacts)
+    })
+    .catch(error => next(error))
 })
 /* app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
@@ -76,17 +87,19 @@ app.get("/info", (req, res) => {
   )
 })
 //3.3
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   /* const id = Number(req.params.id)
   const person = persons.find(person => person.id === id)
   person ? res.json(person.number) : res.status(404).end() */
-  Contact.findById(req.params.id).then(person => {
-    if (person) {
-      res.json(person)
-    } else {
-      res.status(404).end()
-    }
-  })
+  Contact.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        res.json(person)
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -144,6 +157,21 @@ app.post("/api/persons", (req, res) => {
   // *** or
   //persons = [...persons, person]
   res.json(person) */
+})
+
+app.put("/api/persons/:id", (req, resp, next) => {
+  const body = req.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Contact.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then(updatedPerson => {
+      resp.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
